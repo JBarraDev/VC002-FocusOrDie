@@ -12,7 +12,7 @@
 
 La interfaz es un **widget flotante** (siempre visible, modo oscuro con acentos neón) que muestra el tiempo restante, el estado emocional de la mascota, una barra de vida en tiempo real y alertas de audio según lo vaya el enfoque.
 
-Si la mascota llega a **0 % de vida**, el temporizador se congela y aparece una pantalla dramática de *game over* para que vuelvas a centrarte.
+Si la mascota llega a **0 % de vida**, el temporizador se congela y aparece una pantalla dramática de *game over* para que vuelvas a centrarte. Si completas **4 Pomodoros seguidos**, desbloqueas el **Vibe Check**: accesorio VIP, fanfarria y modal *Ultra Instinto*.
 
 ---
 
@@ -25,8 +25,9 @@ Si la mascota llega a **0 % de vida**, el temporizador se congela y aparece una 
 | ❤️ **Sistema de vida** | Empieza al 100 %; penalización por pausa (−25 %) y drenaje continuo al procrastinar (−2 %/s) |
 | 👁️ **Detector de ventanas** | Revisa cada 3 s la ventana activa y detecta distracciones (Twitter, X, YouTube, etc.) |
 | 🔥 **Rachas** | +1 por cada Pomodoro completado; se reinicia al pausar o morir |
+| 👑 **Vibe Check** | 4 Pomodoros seguidos desbloquean corona VIP, fanfarria y modal *Ultra Instinto* |
 | 🎨 **Interfaz neón** | GUI con [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter), modo oscuro y `always-on-top` |
-| 🔊 **Alertas de audio** | Sonidos de éxito, derrota y aviso intermitente (winsound / afplay) |
+| 🔊 **Alertas de audio** | Sonidos de éxito, derrota, aviso intermitente y fanfarria VIP (winsound / afplay) |
 | 💀 **Pantalla de muerte** | Modal dramático al agotar la vida de la mascota |
 | ⚡ **Sin bloqueos** | Motor en hilos daemon; la GUI se refresca con `.after()` sin tirones |
 
@@ -72,6 +73,7 @@ El motor comprueba el **título de la ventana enfocada** cada 3 segundos. Si con
 | Procrastinación | **−2 %** por cada segundo en ventana prohibida |
 | Vida a 0 % | Estado **Muerto**; temporizador congelado; racha → 0 |
 | Pomodoro completado | Racha **+1**; pitido de victoria |
+| **4 Pomodoros seguidos** | Accesorio VIP 👑 en la mascota; modal *Nivel: Ultra Instinto*; fanfarria de desbloqueo |
 
 **Barra de vida en la interfaz:**
 
@@ -80,6 +82,8 @@ El motor comprueba el **título de la ventana enfocada** cada 3 segundos. Si con
 | Más del 60 % | 🟢 Verde |
 | Entre 30 % y 60 % | 🟡 Amarillo |
 | Menos del 30 % | 🔴 Rojo |
+
+> El accesorio VIP se **pierde** si la racha se reinicia (pausa, muerte o reinicio manual).
 
 ---
 
@@ -139,8 +143,9 @@ python app.py
 3. Si necesitas parar, pulsa **Pausar** (la mascota perderá un 25 % de vida y la racha se reiniciará).
 4. Evita abrir redes sociales o streaming durante el trabajo: la mascota entrará en *Procrastinando* y perderá vida rápidamente.
 5. Al completar un Pomodoro oírás un pitido de victoria y comenzará el **descanso de 5 minutos**.
-6. Pulsa **Reiniciar** para restaurar ciclo, vida al 100 % y racha a 0.
-7. Si la mascota muere, confirma el modal dramático y pulsa **Reiniciar y volver a intentarlo**.
+6. Si llegas a **4 Pomodoros seguidos** sin pausar ni morir, verás la corona 👑 en tu mascota y el modal *Ultra Instinto*.
+7. Pulsa **Reiniciar** para restaurar ciclo, vida al 100 % y racha a 0.
+8. Si la mascota muere, confirma el modal dramático y pulsa **Reiniciar y volver a intentarlo**.
 
 ---
 
@@ -223,7 +228,7 @@ Las mejoras son bienvenidas: nuevas palabras clave de distracción, personalizac
 | **Nombre** | FocusOrDie |
 | **Código** | VC002 |
 | **Tipo** | Widget de productividad / Pomodoro gamificado |
-| **Estado** | Fase 2 completada (motor + interfaz + audio) |
+| **Estado** | Fase 2 completada (motor + interfaz + audio + Vibe Check) |
 
 ---
 
