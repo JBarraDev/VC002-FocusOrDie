@@ -1,0 +1,64 @@
+Fase 1: El Motor Lógico y Gestión de Vida
+
+[ROL]
+Actúa como un desarrollador experto en Python y sistemas de automatización local.
+
+[CONTEXTO]
+Vamos a iniciar el desarrollo del proyecto FocusOrDie. Es una app de escritorio tipo Pomodoro que usa una mascota virtual para gamificar la productividad. El bicho debe reaccionar si el usuario se rinde (pausa) o si detecta que abre ventanas prohibidas.
+
+[TAREA]
+Desarrollar el motor lógico del temporizador cíclico, la gestión de la vida de la mascota, sus estados y el sistema de detección de procrastinación en segundo plano.
+
+[ESPECIFICACIONES]
+1. Temporizador Cíclico Automático: Debe gestionar de forma precisa la cuenta atrás sin congelar la aplicación (usa hilos `threading`). Al terminar los 25 minutos de trabajo, debe pasar automáticamente a un estado de "Descanso" de 5 minutos (con su respectiva cuenta atrás). Al terminar el descanso, vuelve a empezar el ciclo de trabajo.
+2. Sistema de Vida: La mascota empieza con 100% de vida.
+   - Si el estado es "Procrastinando", la vida debe disminuir de forma continua (ej. 2% por cada segundo que pase en una ventana prohibida). Si llega a 0%, el estado cambia a "Muerto".
+   - Si el usuario pulsa "Pausar" manualmente, pierde instantáneamente un 25% de vida.
+3. Detector de Ventanas Activas: Comprueba cada 3 segundos el título de la ventana enfocada en el sistema operativo. Si contiene palabras clave como "Twitter", "X", "YouTube", "Facebook", "Instagram" o "Netflix", activa automáticamente el estado "Procrastinando" (a menos que el temporizador ya esté en pausa manual o descanso).
+4. Estados de la Mascota: El motor debe retornar el estado exacto actual y el porcentaje de vida:
+   - "Trabajando": Tiempo de enfoque corriendo normalmente.
+   - "Finalizando": Quedan menos de 3 minutos de enfoque.
+   - "Descanso": En periodo de descanso de 5 minutos (aquí no penaliza abrir ventanas).
+   - "Pausado": El usuario pausó el tiempo voluntariamente.
+   - "Procrastinando": Ventana prohibida abierta en periodo de trabajo.
+   - "Muerto": La barra de vida llegó a 0%.
+   - "Éxito": Ciclo de enfoque completado con éxito.
+5. Contador de Rachas: Suma +1 con cada Pomodoro de trabajo completado con éxito. Si la mascota muere o se pausa, la racha actual se reinicia a 0.
+
+[CRITERIOS DE CALIDAD]
+- Compatibilidad: Asegúrate de que la detección de ventanas use librerías ligeras (`pygetwindow`) con control de excepciones.
+- Incluye un bloque de prueba `if __name__ == '__main__':` para verificar por consola que el tiempo descuenta, la vida baja al procrastinar y los estados cambian al instante.
+
+------------------------------------------------------------------------------------
+
+Fase 2: La Interfaz Cyberpunk, Alertas y Audio
+
+[ROL]
+Actúa como un desarrollador experto en Python e interfaces gráficas.
+
+[CONTEXTO]
+Continuamos con FocusOrDie. El motor lógico (temporizador doble, detector de ventanas y sistema de vida) ya está desarrollado en la Fase 1. Ahora vamos a montar la interfaz visual de impacto conectando todo el sistema.
+
+[TAREA]
+Desarrollar la interfaz gráfica utilizando `customtkinter` conectando el motor de la Fase 1, actualizando los elementos dinámicos y programando las alertas de audio personalizadas.
+
+[ESPECIFICACIONES]
+1. Diseño de Ventana Widget: Forza el modo oscuro puro (`dark`), un fondo negro o gris muy oscuro, componentes con esquinas redondeadas modernas y propiedad `always-on-top` (ventana flotante siempre visible).
+2. Elementos Visuales Dinámicos:
+   - Contador gigante (`MM:SS`) que refleje tanto el tiempo de trabajo como el de descanso.
+   - Label central destacado para la Mascota (usa emojis grandes o caracteres ASCII que cambien según el estado del motor).
+   - Label inferior de Estado con colores neón de alto contraste: Verde neón (Trabajando/Descanso), Rosa fosforito parpadeante (Pausado) o Rojo fuerte (Procrastinando/Muerto).
+   - Barra de Progreso de Vida: Debe actualizarse en tiempo real reflejando el % de vida del motor. Debe cambiar de color (Verde -> Amarillo -> Rojo) según lo crítica que sea la salud de la mascota.
+   - Botones limpios de "Iniciar/Pausar" y "Reiniciar".
+3. Sistema de Alertas de Audio Avanzado: Utiliza la librería estándar (`winsound` en Windows o comandos nativos en Mac) para reproducir sonidos sin dependencias pesadas:
+   - Éxito (Al llegar a 00:00 en trabajo): Pitido corto de victoria/retro.
+   - Derrota (Si la mascota muere): Sonido grave de error o fallo catastrófico.
+   - Alerta Continua (En estado Pausado o Procrastinando): Un sonido intermitente sutil tipo alarma de aviso ("ay, ay, ay").
+4. Pantalla de Muerte Súbita: Si la mascota llega a 0% de vida y el motor cambia a estado "Muerto", la app debe congelar el temporizador y lanzar un Custom Tkinter Toplevel (un alert flotante enorme) con fondo oscuro y letras rojo neón que diga textualmente de forma dramática:
+   "¡¡BASTA DE DISTRACCIONES!!"
+   "Céntrate, y mantenme con vida."
+   "¿Acaso no te importo?"
+5. Vibe Check (4 Pomodoros seguidos): Si la racha alcanza 4 ciclos de trabajo completados sin pausar ni morir, desbloquea un accesorio VIP visible en la mascota (corona 👑), reproduce una fanfarria de victoria y muestra un Toplevel épico con el mensaje: "Nivel: Ultra Instinto. Has entrado en el Flow State, ni el mismísimo Elon Musk te distrae hoy". El accesorio se pierde si la racha se reinicia.
+
+[CRITERIOS DE CALIDAD]
+- Fluidez total: La interfaz debe refrescar el reloj y la barra de vida mediante el método `.after()` de Tkinter o leyendo de forma segura el hilo del motor de la Fase 1, evitando tirones en la ventana.

@@ -1,0 +1,2 @@
+pygetwindow>=0.0.9
+customtkinter>=5.2.0
